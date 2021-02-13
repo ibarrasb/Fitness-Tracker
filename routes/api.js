@@ -1,33 +1,58 @@
 const router = require("express").Router();
-const Transaction = require("../models/transaction.js");
+const Workout = require("../models/workout.js");
 
-router.post("/api/transaction", ({body}, res) => {
-  Transaction.create(body)
-    .then(dbTransaction => {
-      res.json(dbTransaction);
+router.post("/api/workouts", (req, res) => {
+  Workout.create({})
+    .then(dbWorkout => {
+      res.json(dbWorkout);
     })
     .catch(err => {
-      res.status(404).json(err);
+      res.json(err);
     });
 });
 
-router.post("/api/transaction/bulk", ({body}, res) => {
-  Transaction.insertMany(body)
-    .then(dbTransaction => {
-      res.json(dbTransaction);
+router.put("/api/workouts/:id", ({ body, params }, res) => {
+  Workout.findByIdAndUpdate(
+    params.id,
+    { $push: { exercises: body } },
+    // "runValidators" will ensure new exercises meet our schema requirements
+    { new: true, runValidators: true }
+  )
+    .then(dbWorkout => {
+      res.json(dbWorkout);
     })
     .catch(err => {
-      res.status(404).json(err);
+      res.json(err);
     });
 });
 
-router.get("/api/transaction", (req, res) => {
-  Transaction.find({}).sort({date: -1})
-    .then(dbTransaction => {
-      res.json(dbTransaction);
+router.get("/api/workouts", (req, res) => {
+  Workout.find()
+    .then(dbWorkouts => {
+      res.json(dbWorkouts);
     })
     .catch(err => {
-      res.status(404).json(err);
+      res.json(err);
+    });
+});
+
+router.get("/api/workouts/range", ({ query }, res) => {
+  Workout.find({ day: { $gte: query.start, $lte: query.end } })
+    .then(dbWorkouts => {
+      res.json(dbWorkouts);
+    })
+    .catch(err => {
+      res.json(err);
+    });
+});
+
+router.delete("/api/workouts", ({ body }, res) => {
+  Workout.findByIdAndDelete(body.id)
+    .then(() => {
+      res.json(true);
+    })
+    .catch(err => {
+      res.json(err);
     });
 });
 
