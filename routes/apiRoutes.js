@@ -31,7 +31,7 @@ module.exports = function(app) {
         });
     });
 
-    // put api workouts id
+    // put api workouts 
     app.put("/api/workouts/:id", function(req, res) {
         db.Workout.updateOne({
             _id: req.params.id

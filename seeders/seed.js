@@ -7,7 +7,7 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", {
     useCreateIndex: true,
     useFindAndModify: false
 });
-
+//workout seed for db
 let workoutSeed = [
   {
     day: new Date().setDate(new Date().getDate()-10),
